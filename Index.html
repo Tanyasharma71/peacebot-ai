@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <title>PeaceBot AI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-start: #f0f7ff;
+            --bg-end: #fdf7f2;
+            --card-bg: rgba(255, 255, 255, 0.72);
+            --border: rgba(0, 0, 0, 0.06);
+            --text: #2f3a3f;
+            --muted: #6b7a80;
+            --primary: #6CA6FF;      /* brand primary */
+            --primary-strong: #5c8df6;
+            --accent: #8EE3C1;       /* brand accent */
+            --bot: #ECFAF4;          /* calm green */
+            --user: #EEF3FF;         /* soft blue */
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        body[data-theme="dark"] {
+            --bg-start: #0e1726;
+            --bg-end: #1a2235;
+            --card-bg: rgba(20, 27, 44, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #e8eef6;
+            --muted: #b2bdd1;
+            --primary: #7aa2ff;
+            --primary-strong: #5c8df6;
+            --bot: rgba(52, 84, 71, 0.45);
+            --user: rgba(62, 83, 125, 0.45);
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: 'Nunito', system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+            color: var(--text);
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px 16px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 720px;
+            padding: 28px;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            animation: fadeIn 600ms ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .brand h1 { margin: 0; color: #2a3642; font-weight: 700; letter-spacing: 0.2px; }
+        body[data-theme="dark"] .brand h1 { color: #e8eef6; }
+        .subtitle { margin: 2px 0 14px 0; color: var(--muted); font-size: 15px; }
+        .toolbar { display: flex; gap: 8px; align-items: center; }
+        .iconbtn { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 10px; cursor: pointer; }
+        .iconbtn:hover { background: rgba(255,255,255,0.08); }
+
+        form { margin-top: 12px; }
+        label { display: block; margin: 0 0 8px 4px; color: var(--muted); font-size: 14px; }
+
+        textarea {
+            width: 100%;
+            min-height: 110px;
+            padding: 14px 16px;
+            font-size: 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            resize: vertical;
+            outline: none;
+            background: rgba(255,255,255,0.9);
+            transition: box-shadow 160ms ease, border-color 160ms ease;
+        }
+        textarea:focus {
+            border-color: #bcd0ff;
+            box-shadow: 0 0 0 4px rgba(92, 141, 246, 0.15);
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 12px;
+        }
+        .btn {
+            appearance: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            border: 1px solid transparent;
+            background: var(--primary);
+            color: #fff;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 120ms ease, filter 120ms ease, background 120ms ease;
+        }
+        .btn:hover { background: var(--primary-strong); filter: brightness(1.02); }
+        .btn:active { transform: translateY(1px); }
+
+        .hint { margin-top: 6px; color: var(--muted); font-size: 13px; }
+
+        .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+        .chip {
+            padding: 6px 10px;
+            border-radius: 999px;
+            background: rgba(92, 141, 246, 0.08);
+            border: 1px solid #d8e3ff;
+            color: #3a5bb0;
+            font-size: 13px;
+            cursor: pointer;
+            user-select: none;
+        }
+        .chip:hover { background: rgba(92, 141, 246, 0.12); }
+
+        .chat {
+            margin-top: 20px;
+            display: grid;
+            gap: 10px;
+            max-height: 46vh;
+            overflow: auto;
+            padding-right: 6px;
+        }
+        .bubble {
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+        }
+        .bubble.user { background: var(--user); justify-self: end; max-width: 82%; }
+        .bubble.bot { background: var(--bot); justify-self: start; max-width: 86%; }
+        .from { font-weight: 700; font-size: 13px; color: #415266; margin-bottom: 4px; }
+        .msg { margin: 0; color: var(--text); line-height: 1.45; white-space: pre-wrap; }
+
+        .typing { display: inline-flex; gap: 4px; align-items: center; }
+        .typing .dot { width: 6px; height: 6px; background: #7aa2ff; border-radius: 50%; opacity: 0.7; animation: blink 1.2s infinite; }
+        .typing .dot:nth-child(2){ animation-delay: 0.2s }
+        .typing .dot:nth-child(3){ animation-delay: 0.4s }
+        @keyframes blink { 0%, 80%, 100% { opacity: 0.2 } 40% { opacity: 1 } }
+
+        .breath {
+            position: absolute; inset: 0; pointer-events: none;
+            display: grid; place-items: center; opacity: 0.15;
+        }
+        .breath .dot {
+            width: 200px; height: 200px; border-radius: 999px;
+            background: radial-gradient(circle, var(--accent) 0%, var(--accent) 40%, transparent 70%);
+            filter: blur(20px);
+            animation: breathe 7s ease-in-out infinite;
+        }
+        @keyframes breathe {
+            0%, 100% { transform: scale(0.85); opacity: 0.6; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="breath"><div class="dot"></div></div>
+        <div class="topbar">
+            <div class="brand">
+                <img src="/static/logo.svg" width="28" height="28" alt="PeaceBot logo" style="border-radius:8px" />
+                <div>
+                    <h1>PeaceBot</h1>
+                    <div class="subtitle">A gentle space to share and feel supported.</div>
+                </div>
+            </div>
+            <div class="toolbar">
+                <button class="iconbtn" id="themeBtn" type="button">Toggle theme</button>
+                <button class="iconbtn" id="clearBtn" type="button">Clear chat</button>
+            </div>
+        </div>
+
+        <div class="chat" id="chat"></div>
+
+        <form method="POST" id="chatForm" autocomplete="off">
+            <label for="message">How are you feeling today?</label>
+            <textarea name="message" id="message" required placeholder="Share anything on your mind..."></textarea>
+            <div class="actions">
+                <button class="btn" type="submit" id="sendBtn">Send</button>
+            </div>
+            <div class="chips">
+                <span class="chip" data-fill="I feel anxious lately and I can't relax.">Feeling anxious</span>
+                <span class="chip" data-fill="I feel sad and unmotivated today.">Feeling low</span>
+                <span class="chip" data-fill="gratitude">Gratitude</span>
+                <span class="chip" data-fill="Can we do a short grounding exercise?">Grounding</span>
+            </div>
+            <p class="hint">Tip: type "gratitude" to try a quick gratitude practice.</p>
+        </form>
+        
+        <p class="hint" style="text-align:center;margin-top:16px;">PeaceBot is supportive, not a replacement for professional help.</p>
+    </div>
+
+    <script>
+        const form = document.getElementById('chatForm');
+        const btn = document.getElementById('sendBtn');
+        const textarea = document.getElementById('message');
+        const chips = document.querySelectorAll('.chip');
+        const chat = document.getElementById('chat');
+        const themeBtn = document.getElementById('themeBtn');
+        const clearBtn = document.getElementById('clearBtn');
+
+        const STORAGE_KEY = 'peacebot_history_v1';
+        const THEME_KEY = 'peacebot_theme_v1';
+
+        function loadTheme() {
+            const t = localStorage.getItem(THEME_KEY) || 'light';
+            document.body.setAttribute('data-theme', t);
+        }
+        function toggleTheme() {
+            const current = document.body.getAttribute('data-theme') || 'light';
+            const next = current === 'light' ? 'dark' : 'light';
+            document.body.setAttribute('data-theme', next);
+            localStorage.setItem(THEME_KEY, next);
+        }
+
+        function saveHistory(items){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
+        function loadHistory(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e){ return []; } }
+
+        function appendMessage(role, content) {
+            const wrap = document.createElement('div');
+            wrap.className = `bubble ${role}`;
+            const from = document.createElement('div');
+            from.className = 'from';
+            from.textContent = role === 'user' ? 'You' : 'PeaceBot';
+            const p = document.createElement('p');
+            p.className = 'msg';
+            p.textContent = content;
+            wrap.appendChild(from);
+            wrap.appendChild(p);
+            chat.appendChild(wrap);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function appendTyping() {
+            const b = document.createElement('div');
+            b.className = 'bubble bot';
+            b.id = 'typing';
+            const from = document.createElement('div'); from.className = 'from'; from.textContent = 'PeaceBot';
+            const row = document.createElement('div'); row.className = 'typing';
+            row.innerHTML = '<span class="dot"></span><span class="dot"></span><span class="dot"></span>';
+            b.appendChild(from); b.appendChild(row);
+            chat.appendChild(b);
+            chat.scrollTop = chat.scrollHeight;
+        }
+        function removeTyping(){ const t = document.getElementById('typing'); if(t) t.remove(); }
+
+        function renderHistory(items){
+            chat.innerHTML = '';
+            if(items.length === 0){
+                appendMessage('bot', "Welcome. I'm here to listen. What would you like to share today?");
+                return;
+            }
+            items.forEach(m => appendMessage(m.role, m.content));
+        }
+
+        async function sendMessage(text){
+            const trimmed = (text || '').trim();
+            if(!trimmed) return;
+            textarea.value = '';
+            btn.disabled = true; btn.textContent = 'Sending…';
+
+            const history = loadHistory();
+            history.push({ role: 'user', content: trimmed });
+            appendMessage('user', trimmed);
+            appendTyping();
+            saveHistory(history);
+
+            try {
+                const res = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: trimmed })
+                });
+                const data = await res.json();
+                removeTyping();
+                if(!res.ok || !data.reply){
+                    appendMessage('bot', 'Sorry, I could not respond right now. Please try again.');
+                } else {
+                    appendMessage('bot', data.reply);
+                    history.push({ role: 'bot', content: data.reply });
+                    saveHistory(history);
+                }
+            } catch (e) {
+                removeTyping();
+                appendMessage('bot', 'Network error. Please check your connection and try again.');
+            } finally {
+                btn.disabled = false; btn.textContent = 'Send';
+                textarea.focus();
+            }
+        }
+
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                const txt = chip.getAttribute('data-fill') || '';
+                sendMessage(txt);
+            });
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            sendMessage(textarea.value);
+        });
+
+        textarea.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' && !e.shiftKey){
+                e.preventDefault();
+                sendMessage(textarea.value);
+            }
+        });
+
+        themeBtn.addEventListener('click', toggleTheme);
+        clearBtn.addEventListener('click', () => {
+            localStorage.removeItem(STORAGE_KEY);
+            renderHistory([]);
+        });
+
+        loadTheme();
+        renderHistory(loadHistory());
+    </script>
+</body>
+</html>
+
