@@ -26,7 +26,7 @@ peacebot ai is an intelligent empathetic chatbot built to offer emotional suppor
      - `.venv\\Scripts\\Activate.ps1`
 
 2. Install dependencies
-   - `pip install -r Requirement.txt`
+   - `pip install -r requirement.txt`
 
 3. (Optional) Set your OpenAI API key to enable AI responses
    - PowerShell: `setx OPENAI_API_KEY "your_key_here"`
@@ -61,3 +61,5 @@ Password protection
 This project is licensed under the MIT License.
 
 🧘‍♀️ PeaceBot AI — Because everyone deserves a moment of peace.
+
+Checkout @CONTRIBUTING.md before getting started for more information
