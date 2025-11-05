@@ -41,13 +41,7 @@ peacebot ai is an intelligent empathetic chatbot built to offer emotional suppor
 
 Notes
 - The app works without an OpenAI key using a rule-based fallback.
-- Type "gratitude" to try the gratitude flow in the UI.
-
-### Branding
-- Replace `static/logo.svg` with your own logo (keep the filename) or update the `<img src="/static/logo.svg">` in `Index.html`.
-- Brand colors are controlled via CSS variables in `Index.html` under `:root`:
-  - `--primary` (soft blue), `--accent` (mint green), `--bot` and `--user` bubble colors.
-- Dark theme values are defined under `body[data-theme="dark"]`. Adjust as needed.
+- Type "gratitude" to try the gratitude flow in the UI 
   
 🌱 Future Scope
 Add data visualization (mood graphs)
