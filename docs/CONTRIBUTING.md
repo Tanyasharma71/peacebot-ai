@@ -1,13 +1,13 @@
-🧠 CONTRIBUTING.md — PeaceBot AI (Winter of Code Social)
+CONTRIBUTING.md — PeaceBot AI (Winter of Code Social)
 
-# 🤖 Contributing to PeaceBot AI
+# Contributing to PeaceBot AI
 
 Welcome to **PeaceBot AI**, a chatbot project under **Winter of Code Social (WOCS)**!  
 We’re thrilled to have you here. This guide will walk you through contributing effectively, following Code Social’s open-source standards.
 
 ---
 
-## 🌱 About the Project
+## About the Project
 PeaceBot AI aims to promote **peaceful dialogue, positivity, and mindfulness through AI-driven chat interactions**.  
 The project uses **Python, NLP models, and Flask** for backend development, with potential integrations for **sentiment analysis** and **emotion-aware responses**.
 
@@ -36,7 +36,7 @@ python app.py
 
 ---
 
-🌿 Branch Workflow
+ Branch Workflow
 
 1. Create a New Branch
 
@@ -83,7 +83,7 @@ Then go to your fork on GitHub → click Compare & Pull Request → fill in the 
 
 ---
 
-🧩 Pull Request Guidelines
+ Pull Request Guidelines
 
 One feature/fix per PR.
 
@@ -130,7 +130,7 @@ def generate_response(user_input: str) -> str:
 
 ---
 
-🐞 Reporting Issues
+ Reporting Issues
 
 Use the Issues tab and follow this format:
 
@@ -162,7 +162,7 @@ good first issue
 
 ---
 
-🧾 WOCS Contribution Points
+ WOCS Contribution Points
 
 Level	Description	Points
 
@@ -176,7 +176,7 @@ Points are awarded after PR merge by mentors/admins.
 
 ---
 
-💬 Communication & Support
+ Communication & Support
 
 Join the Code Social Discord: discord.gg/MSTNyRSPYW
 
@@ -188,7 +188,7 @@ Email: codesocialcommunity@gmail.com
 
 ---
 
-🌟 Best Practices
+ Best Practices
 
 1. Comment before working on an issue to avoid duplication.
 
@@ -208,7 +208,7 @@ git pull upstream main
 
 ---
 
-🏆 Sharing Your Journey
+ Sharing Your Journey
 
 Follow the Code Social principle: “Learn. Build. Share.”
 
