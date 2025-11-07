@@ -1,31 +1,53 @@
-# Peacebot-AI your friendly mental health campanion
+# 🕊️ Peacebot-AI — Your Friendly Mental Health Companion  
 
-peacebot ai is an intelligent empathetic chatbot built to offer emotional support , motivational message and mindfulness guidance
-Peacebot AI\* is an AI-powered mental health chatbot designed to provide empathetic support, stress-relief conversations, and helpful resources to individuals experiencing emotional distress. Built with a user-centric approach, Peacebot aims to offer a safe, non-judgmental space for mental wellness conversations.
+![GitHub Repo stars](https://img.shields.io/github/stars/Tanyasharma71/peacebot-ai?style=for-the-badge)
+![GitHub forks](https://img.shields.io/github/forks/Tanyasharma71/peacebot-ai?style=for-the-badge)
+![GitHub issues](https://img.shields.io/github/issues/Tanyasharma71/peacebot-ai?style=for-the-badge)
+![License](https://img.shields.io/github/license/Tanyasharma71/peacebot-ai?style=for-the-badge)
 
-💡 Key Features
+---
 
-💬 Conversational support for stress, anxiety, and loneliness  
- 🧠 Natural Language Understanding using OpenAI's API  
- 📚 Personalized mental health tips and coping strategies  
- 🔒 Privacy-focused and respectful interactions  
- 🕒 Always available for support, anytime, anywhere
+## 🧘‍♀️ Introduction  
 
-🧰 Tech Stack
+**Peacebot-AI** is an intelligent, empathetic chatbot built to offer emotional support, motivational messages, and mindfulness guidance.  
 
-Language:_ Python  
- AI Integration:_ OpenAI GPT (via API)  
- Backend:_ Flask (for API server)  
- Frontend :_ HTML/CSS/JavaScript  
- Version Control:\* Git & GitHub
+It’s an **AI-powered mental health chatbot** designed to provide **empathetic conversations, stress-relief guidance, and helpful resources** to individuals experiencing emotional distress.  
 
-## Quickstart
+Built with a **user-centric approach**, Peacebot-AI aims to create a **safe, non-judgmental space** for mental wellness conversations. 🌸  
 
-1. Create and activate a virtual environment
+---
 
-   - Windows PowerShell
-     - `python -m venv .venv`
-     - `.venv\\Scripts\\Activate.ps1`
+## 💡 Key Features  
+
+- 💬 **Conversational support** for stress, anxiety, and loneliness  
+- 🧠 **Natural Language Understanding** powered by OpenAI’s GPT API  
+- 📚 **Personalized coping strategies** and mental health tips  
+- 🔒 **Privacy-focused** — no user profiling or data sharing  
+- 🕒 **Always available** for support, anytime, anywhere  
+
+---
+
+## 🧰 Tech Stack  
+
+| Component | Technology Used |
+|------------|----------------|
+| **Language** | Python |
+| **AI Integration** | OpenAI GPT (via API) |
+| **Backend** | Flask (REST API Server) |
+| **Frontend** | HTML, CSS, JavaScript |
+| **Version Control** | Git & GitHub |
+
+---
+
+## 🚀 Quickstart  
+
+### 1️⃣ Create and activate a virtual environment  
+
+#### **Windows PowerShell**
+```bash
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
 
 2. Install dependencies
 
