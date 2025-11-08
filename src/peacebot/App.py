@@ -273,3 +273,4 @@ if __name__ == "__main__":
     debug = os.getenv("FLASK_DEBUG", "True").lower() == "true"
     logger.info(f"🚀 Peacebot running on port {port}")
     app.run(host="0.0.0.0", port=port, debug=debug)
+#
