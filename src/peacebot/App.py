@@ -8,58 +8,72 @@ from dotenv import load_dotenv
 from peacebot import PeacebotResponder
 from Gratitude import log_gratitude_noninteractive
 
-# Logging setup
+# -----------------------------------------------------------
+# Logging Configuration
+# -----------------------------------------------------------
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
 logger = logging.getLogger(__name__)
 
-# Environment setup
+# -----------------------------------------------------------
+# Flask App Initialization
+# -----------------------------------------------------------
 load_dotenv()
 app = Flask(__name__)
 responder = PeacebotResponder()
 
-# File paths
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))  # go up from src/peacebot/
+# -----------------------------------------------------------
+# Path Configuration
+# -----------------------------------------------------------
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 TEMPLATE_PATH = os.path.join(BASE_DIR, "static", "Index.html")
-DATA_DIR = os.path.join(BASE_DIR, "data")
+DATA_DIR = os.path.join(BASE_DIR, "src", "peacebot", "data")
 os.makedirs(DATA_DIR, exist_ok=True)
 MOOD_FILE = os.path.join(DATA_DIR, "mood_logs.json")
+
+# Initialize JSON if missing
 if not os.path.exists(MOOD_FILE):
     with open(MOOD_FILE, "w") as f:
         json.dump([], f)
 
 GRATITUDE_KEYWORDS = {"gratitude", "thanks", "thank you"}
 
-# Load main page template
+# Load the main HTML template
 try:
     with open(TEMPLATE_PATH, "r", encoding="utf-8") as f:
         INDEX_TEMPLATE = f.read()
 except FileNotFoundError:
-    logger.error(f"Template not found at {TEMPLATE_PATH}")
-    INDEX_TEMPLATE = "<h1>Peacebot-AI</h1><p>Index.html missing</p>"
+    logger.warning(f"Index template not found at {TEMPLATE_PATH}")
+    INDEX_TEMPLATE = "<h1>Peacebot-AI</h1><p>Template missing</p>"
 
-# ----------------------------------------------------------------
-# 💬 Peacebot Chat Route
-# ----------------------------------------------------------------
+# -----------------------------------------------------------
+# Main Routes
+# -----------------------------------------------------------
 @app.route("/", methods=["GET", "POST"])
 def index():
+    """Main web chat interface."""
     user_message = None
     bot_reply = None
+
     if request.method == "POST":
         user_message = (request.form.get("message") or "").strip()
         if user_message.lower() in GRATITUDE_KEYWORDS:
             bot_reply = log_gratitude_interactive_safe()
         else:
             bot_reply = responder.generate_response(user_message)
+
     return render_template_string(INDEX_TEMPLATE, user_message=user_message, bot_reply=bot_reply)
+
 
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
+    """API endpoint for chat interaction."""
     try:
         data = request.get_json(silent=True) or {}
         message = (data.get("message") or "").strip()
+
         if not message:
             return jsonify({"error": "message is required"}), 400
 
@@ -70,15 +84,15 @@ def api_chat():
         reply = responder.generate_response(message)
         return jsonify({"reply": reply, "type": "chat"})
     except Exception as e:
-        logger.error(f"Chat error: {str(e)}")
-        return jsonify({"error": "Chat processing failed"}), 500
+        logger.error(f"Error in chat API: {e}")
+        return jsonify({"error": "Internal server error"}), 500
 
-# ----------------------------------------------------------------
-# 🧘‍♀️ Mood Tracker Endpoints
-# ----------------------------------------------------------------
+# -----------------------------------------------------------
+# 🧘 Mood Tracker Routes
+# -----------------------------------------------------------
 @app.route("/api/moodlog", methods=["POST"])
 def add_mood():
-    """Add a new mood entry"""
+    """Log a new mood entry."""
     try:
         data = request.get_json(force=True)
         entry = {
@@ -86,35 +100,39 @@ def add_mood():
             "mood": data.get("mood", "Neutral"),
             "note": data.get("note", "")
         }
+
         with open(MOOD_FILE, "r") as f:
             logs = json.load(f)
         logs.append(entry)
         with open(MOOD_FILE, "w") as f:
             json.dump(logs, f, indent=2)
+
         return jsonify({"status": "success", "entry": entry}), 201
     except Exception as e:
         logger.error(f"Error saving mood: {e}")
         return jsonify({"error": "Could not save mood"}), 500
 
+
 @app.route("/api/moodlog", methods=["GET"])
 def get_moods():
-    """Return all logged moods"""
+    """Return all logged moods."""
     try:
         with open(MOOD_FILE, "r") as f:
             logs = json.load(f)
-        return jsonify(logs)
+        return jsonify(logs), 200
     except Exception as e:
         logger.error(f"Error reading mood logs: {e}")
         return jsonify({"error": "Could not read mood logs"}), 500
 
+
 @app.route("/mood")
 def mood_page():
-    """Simple embedded HTML for mood tracker"""
+    """Simple web interface for mood tracking."""
     html = """
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-        <meta charset="UTF-8" />
+        <meta charset="UTF-8">
         <title>Peacebot-AI Mood Tracker</title>
         <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <style>
@@ -128,7 +146,7 @@ def mood_page():
         </style>
     </head>
     <body>
-        <h1>🧘‍♀️ Peacebot-AI Mood Tracker</h1>
+        <h1>🧘 Peacebot-AI Mood Tracker</h1>
         <form id="moodForm">
             <label>Date:</label>
             <input type="date" id="date" required>
@@ -144,14 +162,17 @@ def mood_page():
             <textarea id="note" rows="3" placeholder="Optional"></textarea>
             <button type="submit">Log Mood</button>
         </form>
+
         <h2>📊 Mood History</h2>
         <canvas id="chart" width="400" height="200"></canvas>
+
         <script>
             async function loadData() {
                 const res = await fetch("/api/moodlog");
                 const data = await res.json();
                 drawChart(data);
             }
+
             function drawChart(data) {
                 const ctx = document.getElementById("chart");
                 const labels = data.map(d => d.date);
@@ -165,15 +186,30 @@ def mood_page():
                         default: return 3;
                     }
                 });
+
                 new Chart(ctx, {
                     type: "line",
                     data: {
                         labels,
-                        datasets: [{ label: "Mood Trend", data: values, borderColor: "rgb(54,162,235)", fill: false }]
+                        datasets: [{
+                            label: "Mood Trend",
+                            data: values,
+                            borderColor: "rgb(54,162,235)",
+                            fill: false
+                        }]
                     },
-                    options: { scales: { y: { min: 0, max: 5, ticks: { stepSize: 1 } } } }
+                    options: {
+                        scales: {
+                            y: {
+                                min: 0,
+                                max: 5,
+                                ticks: { stepSize: 1 }
+                            }
+                        }
+                    }
                 });
             }
+
             document.getElementById("moodForm").addEventListener("submit", async e => {
                 e.preventDefault();
                 const payload = {
@@ -189,6 +225,7 @@ def mood_page():
                 alert("Mood logged!");
                 loadData();
             });
+
             window.onload = () => {
                 document.getElementById("date").valueAsDate = new Date();
                 loadData();
@@ -199,23 +236,40 @@ def mood_page():
     """
     return html
 
-# ----------------------------------------------------------------
-# 🌼 Gratitude Helper
-# ----------------------------------------------------------------
+# -----------------------------------------------------------
+# Gratitude Helper
+# -----------------------------------------------------------
 def log_gratitude_interactive_safe() -> str:
+    """Non-blocking gratitude placeholder for web interface."""
     try:
-        items = ["Something I'm grateful for", "A person who made me smile", "A peaceful moment"]
+        items = [
+            "Something I'm grateful for",
+            "A person who made me smile",
+            "A peaceful moment"
+        ]
         log_gratitude_noninteractive(items)
         return "Let's do a quick gratitude practice: think of 3 things you're grateful for today 💫"
     except Exception as e:
-        logger.error(f"Error saving gratitude: {e}")
+        logger.error(f"Gratitude logging error: {e}")
         return "Gratitude practice failed, but take a moment to reflect 🌸"
 
-# ----------------------------------------------------------------
-# 🧱 Run App
-# ----------------------------------------------------------------
+# -----------------------------------------------------------
+# Error Handling
+# -----------------------------------------------------------
+@app.errorhandler(404)
+def not_found(e):
+    return jsonify({"error": "Not Found"}), 404
+
+@app.errorhandler(500)
+def internal_error(e):
+    logger.error(f"Internal Server Error: {e}")
+    return jsonify({"error": "Internal Server Error"}), 500
+
+# -----------------------------------------------------------
+# App Run
+# -----------------------------------------------------------
 if __name__ == "__main__":
     port = int(os.getenv("PORT", 5000))
     debug = os.getenv("FLASK_DEBUG", "True").lower() == "true"
-    logger.info(f"Running Peacebot on port {port}")
+    logger.info(f"🚀 Peacebot running on port {port}")
     app.run(host="0.0.0.0", port=port, debug=debug)
