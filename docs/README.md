@@ -1,7 +1,3 @@
-You said:
-no give me the whole thing in s single mrkdwon so i can copy . make shre ntohgin break when 
-bash 
-please give the hole thing in one single markdown clock wiht all formating bwithotu breaking out of the mrkwdwon
 
 # 🕊️ Peacebot-AI — Your Friendly Mental Health Companion  
 
