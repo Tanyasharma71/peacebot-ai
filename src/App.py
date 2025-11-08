@@ -19,7 +19,16 @@ app = Flask(__name__)
 responder = PeacebotResponder()
 
 # Constants
-TEMPLATE_PATH = os.path.join(os.path.dirname(__file__), "Index.html")
+import os
+
+TEMPLATE_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(__file__)),
+    "static",
+    "Index.html"
+)
+
+print(TEMPLATE_PATH)
+
 GRATITUDE_KEYWORDS = {"gratitude", "thanks", "thank you"}
 
 # Read template file once and serve via render_template_string for simplicity
