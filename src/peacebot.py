@@ -198,7 +198,7 @@ class PeacebotResponder:
         return self.DEFAULT_RESPONSE
 
 
-# Graceful shutdown logging
+# shutdown logging
 import atexit
 
 atexit.register(lambda: logger.info(f'{"=" * 40} END LOG {"=" * 40}\n{"=" * 60}\n\n'))
