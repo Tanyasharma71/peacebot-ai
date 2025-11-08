@@ -1,4 +1,5 @@
-"""Gratitude logging module for Peacebot.
+"""
+Gratitude logging module for Peacebot.
 
 This module provides functionality to log gratitude entries both interactively
 (CLI) and non-interactively (programmatic).
@@ -13,8 +14,14 @@ from typing import List
 # Configure logging
 logger = logging.getLogger(__name__)
 
-# Constants
-DATA_FILE = "gratitude_log.json"
+# --------------------------------------------------------------------
+# File and Constants
+# --------------------------------------------------------------------
+BASE_DIR = os.path.dirname(__file__)
+DATA_DIR = os.path.join(BASE_DIR, "data")
+os.makedirs(DATA_DIR, exist_ok=True)
+DATA_FILE = os.path.join(DATA_DIR, "gratitude_log.json")
+
 MAX_GRATITUDE_ITEMS = 3
 
 
