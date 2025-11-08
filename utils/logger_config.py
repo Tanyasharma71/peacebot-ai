@@ -27,7 +27,7 @@ def get_logger(name: str = "peacebot"):
 
     logger.setLevel(logging.INFO)
 
-    # 🗓️ Folder structure: logs/YYYY/MonthName/DD
+    #  Folder structure: logs/YYYY/MonthName/DD
     now = datetime.now()
     year_folder = now.strftime("%Y")
     month_folder = now.strftime("%B")   # e.g., "November"
@@ -36,7 +36,7 @@ def get_logger(name: str = "peacebot"):
     log_dir = os.path.join("logs", year_folder, month_folder, day_folder)
     os.makedirs(log_dir, exist_ok=True)
 
-    # 📝 Log file path (rotates daily)
+    #  Log file path (rotates daily)
     log_file = os.path.join(log_dir, "peacebot.log")
 
     # Console handler
