@@ -200,5 +200,5 @@ class PeacebotResponder:
 
 # shutdown logging
 import atexit
+atexit.register(lambda: logger.info(f'{"=" * 40} END LOG {"=" * 40} '))
 
-atexit.register(lambda: logger.info(f'{"=" * 40} END LOG {"=" * 40}\n{"=" * 60}\n\n'))

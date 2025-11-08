@@ -170,4 +170,3 @@ if __name__ == "__main__":
         logger.info("=" * 80)
         logger.info("Peacebot server closed")
         logger.info("=" * 80)
-
