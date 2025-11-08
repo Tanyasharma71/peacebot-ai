@@ -1,19 +1,29 @@
 import os
-import logging
+import sys
 from typing import Optional
 
-# Configure logging
-logger = logging.getLogger(__name__)
+# Ensure utils path is available for logger import
+sys.path.append(os.path.dirname(os.path.dirname(__file__)))
+
+from utils.logger_config import get_logger
+
+# ---------------------------------------------------------------------------
+# Logger Setup
+# ---------------------------------------------------------------------------
+logger = get_logger(__name__)
+
 
 
 class PeacebotResponder:
+    logger.info(f'{"=" * 40} START LOG {"=" * 40}')
+    logger.info("Peacebot initialized successfully.")
     """Generates supportive chatbot responses.
 
     Uses OpenAI if an API key is present, otherwise falls back to a
     lightweight, rule-based responder to ensure the app runs out of the box.
     """
 
-    # Constants for crisis detection
+    # Crisis detection markers
     CRISIS_MARKERS = [
         "suicide",
         "kill myself",
@@ -63,139 +73,132 @@ class PeacebotResponder:
     )
 
     def __init__(self) -> None:
-        """Initialize the PeacebotResponder with OpenAI configuration if available."""
+        """Initialize PeacebotResponder and detect OpenAI configuration."""
         self._openai_api_key = os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_APIKEY")
         self._openai_available = False
         self._client = None
         self._sdk_mode = "none"
 
+        logger.debug("PeacebotResponder initialization started.")
         self._initialize_openai()
 
     def _initialize_openai(self) -> None:
-        """Initialize OpenAI client with proper error handling."""
+        """Initialize OpenAI client with fallback handling."""
         if not self._openai_api_key:
             logger.info("No OpenAI API key found. Using local responses.")
             return
 
-        # Try newer SDK style (openai>=1.0)
         try:
+            # Try newer OpenAI SDK (>=1.0)
             from openai import OpenAI
-
             self._client = OpenAI(api_key=self._openai_api_key)
             self._openai_available = True
             self._sdk_mode = "new"
-            logger.info("OpenAI client initialized successfully (new SDK)")
+            logger.info("OpenAI client initialized (new SDK).")
             return
         except ImportError:
-            logger.debug("New OpenAI SDK not available, trying legacy SDK")
+            logger.debug("New OpenAI SDK not found, trying legacy version.")
         except Exception as e:
             logger.error(f"Error initializing new OpenAI SDK: {str(e)}")
 
-        # Try legacy SDK style (openai<1.0)
         try:
+            # Try legacy OpenAI SDK (<1.0)
             import openai
-
             openai.api_key = self._openai_api_key
             self._client = openai
             self._openai_available = True
             self._sdk_mode = "legacy"
-            logger.info("OpenAI client initialized successfully (legacy SDK)")
+            logger.info("OpenAI client initialized (legacy SDK).")
         except ImportError:
             logger.warning("OpenAI SDK not installed. Using local responses.")
         except Exception as e:
             logger.error(f"Error initializing legacy OpenAI SDK: {str(e)}")
 
     def generate_response(self, user_message: str) -> str:
-        """Return a supportive response. Prefer OpenAI if configured.
-        
-        Args:
-            user_message: The user's input message
-            
-        Returns:
-            A supportive response string
-        """
+        """Return a supportive response; use OpenAI if configured."""
         sanitized_message = (user_message or "").strip()
+        logger.debug(f"User message received: {sanitized_message}")
+
         if not sanitized_message:
+            logger.info("Empty message received; returning comfort prompt.")
             return "I'm here with you. Tell me what's on your mind."
 
         if self._openai_available and self._client is not None:
             try:
+                logger.debug("Generating response via OpenAI API.")
                 return self._generate_with_openai(sanitized_message)
             except Exception as e:
-                logger.error(f"OpenAI API error: {str(e)}. Falling back to local responses.")
-                # Fall back gracefully if API errors out
+                logger.error(f"OpenAI API error: {str(e)}. Falling back to local generation.")
 
+        logger.debug("Using local rule-based response generation.")
         return self._generate_locally(sanitized_message)
 
     def _generate_with_openai(self, prompt: str) -> str:
-        """Generate response using OpenAI API.
-        
-        Args:
-            prompt: The user's message
-            
-        Returns:
-            AI-generated response
-            
-        Raises:
-            Exception: If API call fails
-        """
-        model = os.getenv("OPENAI_MODEL", "gpt-4o-mini" if self._sdk_mode == "new" else "gpt-3.5-turbo")
-        
+        """Generate response using OpenAI API."""
+        model = os.getenv(
+            "OPENAI_MODEL",
+            "gpt-4o-mini" if self._sdk_mode == "new" else "gpt-3.5-turbo"
+        )
+        truncated_prompt = (prompt[:100] + "...") if len(prompt) > 100 else prompt
+        logger.debug(f"Prompt sent to OpenAI (truncated): {truncated_prompt}")
+
         messages = [
             {"role": "system", "content": self.SYSTEM_INSTRUCTIONS},
             {"role": "user", "content": prompt},
         ]
 
-        if self._sdk_mode == "new":
-            # openai>=1.0 style
-            completion = self._client.chat.completions.create(
-                model=model,
-                messages=messages,
-                temperature=0.7,
-                max_tokens=300,
-            )
-            return (completion.choices[0].message.content or "").strip()
+        try:
+            if self._sdk_mode == "new":
+                completion = self._client.chat.completions.create(
+                    model=model,
+                    messages=messages,
+                    temperature=0.7,
+                    max_tokens=300,
+                )
+                response = completion.choices[0].message.content.strip()
+            elif self._sdk_mode == "legacy":
+                completion = self._client.ChatCompletion.create(
+                    model=model,
+                    messages=messages,
+                    temperature=0.7,
+                    max_tokens=300,
+                )
+                response = completion["choices"][0]["message"]["content"].strip()
+            else:
+                logger.warning("Unknown SDK mode. Falling back to local response.")
+                return self._generate_locally(prompt)
 
-        if self._sdk_mode == "legacy":
-            # openai<1.0 style
-            completion = self._client.ChatCompletion.create(
-                model=model,
-                messages=messages,
-                temperature=0.7,
-                max_tokens=300,
-            )
-            return (completion["choices"][0]["message"]["content"] or "").strip()
+            truncated_response = (response[:100] + "...") if len(response) > 100 else response
+            logger.info(f"OpenAI response generated (truncated): {truncated_response}")
+            return response
 
-        # Should not reach here, but safe fallback
-        return self._generate_locally(prompt)
+        except Exception as e:
+            logger.error(f"OpenAI API call failed: {str(e)}")
+            raise
 
     def _generate_locally(self, prompt: str) -> str:
-        """Generate response using rule-based logic.
-        
-        Args:
-            prompt: The user's message
-            
-        Returns:
-            Rule-based response
-        """
+        """Generate response using rule-based keyword detection."""
         lowered = prompt.lower()
+        logger.debug(f"Processing message locally: {lowered}")
 
-        # Check for crisis markers first (highest priority)
         if any(marker in lowered for marker in self.CRISIS_MARKERS):
-            logger.warning("Crisis marker detected in user message")
+            logger.warning("Crisis marker detected in message.")
             return self.CRISIS_RESPONSE
-
-        # Check for anxiety-related keywords
         if any(word in lowered for word in ["anxious", "anxiety", "overwhelmed", "panic", "worried"]):
+            logger.info("Anxiety-related message detected.")
             return self.ANXIETY_RESPONSE
-
-        # Check for sadness-related keywords
         if any(word in lowered for word in ["sad", "down", "lonely", "depressed", "hopeless"]):
+            logger.info("Sadness-related message detected.")
             return self.SADNESS_RESPONSE
-
-        # Check for anger-related keywords
         if any(word in lowered for word in ["angry", "frustrated", "irritated", "mad", "furious"]):
+            logger.info("Anger-related message detected.")
             return self.ANGER_RESPONSE
 
-        # Default supportive response
+        logger.info("Default response used (no keyword match).")
         return self.DEFAULT_RESPONSE
+
+
+# shutdown logging
+import atexit
+atexit.register(lambda: logger.info(f'{"=" * 40} END LOG {"=" * 40} '))
+
