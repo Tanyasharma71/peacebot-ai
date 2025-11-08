@@ -7,11 +7,13 @@ This module provides functionality to log gratitude entries both interactively
 import json
 import datetime
 import os
-import logging
+import sys
+sys.path.append(os.path.dirname(os.path.dirname(__file__))) 
+from utils.logger_config import get_logger
 from typing import List
 
 # Configure logging
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 # Constants
 DATA_FILE = "gratitude_log.json"
@@ -27,6 +29,7 @@ def log_gratitude() -> str:
     Returns:
         Success message string
     """
+    logger.info("Starting interactive gratitude logging session")
     print("Let's do a quick gratitude practice 🌈")
     gratitude_list = []
     
@@ -44,6 +47,7 @@ def log_gratitude() -> str:
             return "Gratitude practice cancelled."
 
     if not gratitude_list:
+        logger.info("No gratitude items entered during session")
         return "No gratitude items entered."
 
     entry = {
