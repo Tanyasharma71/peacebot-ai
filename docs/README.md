@@ -53,11 +53,8 @@ peacebot-ai/
 │ │ ├── logger_config.py # JSON-based structured logging
 │ │ ├── retry_utils.py # Retry & exponential backoff logic
 │ │ └── init.py
-│ ├── templates/
-│ │ └── index.html # Frontend chat interface
 │ ├── static/
-│ │ ├── css/
-│ │ │ └── style.css
+│ │ ├── index.html # Frontend chat interface
 │ │ └── js/
 │ │ └── script.js
 │ └── init.py
@@ -87,7 +84,7 @@ source .venv/bin/activate
 ```
 ### 2️⃣ Install dependencies
 ```bash
-pip install -r requirements.txt
+pip install -r requirement.txt
 ```
 ### 3️⃣ Configure your API key
 **Option 1 — Using Environment Variable**

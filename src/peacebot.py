@@ -7,6 +7,7 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from utils.config_loader import get
 from utils.logger_config import get_logger
+from utils.retry_utils import retry
 
 # ---------------------------------------------------------------------------
 # Logger Setup
@@ -136,6 +137,7 @@ class PeacebotResponder:
         logger.debug("Using local rule-based response generation.")
         return self._generate_locally(sanitized_message)
 
+    @retry(max_retries=3, base_delay=2)
     def _generate_with_openai(self, prompt: str) -> str:
         """Generate response using OpenAI API."""
         model = os.getenv(
