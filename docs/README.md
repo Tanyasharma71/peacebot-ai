@@ -41,38 +41,77 @@ It aims to create a **safe, non-judgmental, and supportive environment** through
 
 ---
 
-## 🗂️ Project Structure  
+# 🧠 Project Structure — PeaceBot AI
+
+This document describes the overall directory and file structure of the **PeaceBot AI** project,  
+providing an overview of what each file and folder does.
+
+---
+
+## 📁 Root Directory Overview
+
+```bash 
+peacebot-ai/
+│
+├── config/                     # Configuration files for application setup
+│   └── config.ini              # Stores app-level configurations and environment variables
+│
+├── docs/                       # Documentation folder (API references, guides, etc.)
+│
+├── src/                        # Core source code for PeaceBot AI
+│   ├── data/                   # Contains datasets or data processing modules
+│   ├── utils/                  # Utility functions and helper scripts
+│   │   ├── __init__.py         # Marks 'utils' as a Python package
+│   │   ├── config_loader.py    # Handles reading and parsing of configuration files
+│   │   ├── logger_config.py    # Configures logging for debugging and monitoring
+│   │   └── retry_utils.py      # Implements retry logic for failed API or network calls
+│   │
+│   ├── App.py                  # Main application entry file or Flask/FastAPI runner
+│   ├── Gratitude.py            # Handles gratitude or response generation module
+│   ├── peacebot.py             # Main PeaceBot logic or chatbot controller
+│   ├── __init__.py             # Initializes the source package
+│   └── entry_points.txt        # Defines CLI or app entry points for execution
+│
+├── static/                     # Static files (HTML, CSS, JS, images)
+│   ├── Index.html              # Main web interface for PeaceBot
+│   ├── logo.svg                # Project or app logo
+│
+├── .gitignore                  # Specifies files/folders to ignore in Git commits
+│
+├── CONTRIBUTING.md             # Guidelines for new contributors
+│
+├── LICENSE.md                  # Project license (e.g., MIT, AGPL, etc.)
+│
+├── README.md                   # Main project documentation (overview, usage, setup)
+│
+├── Requirement.txt             # Python dependencies for installing the project
+│
+└── config.ini                  # Global configuration file (if outside `config/`)
+```
+---
+
+## 🚀 Usage Note
+
+To run the project locally:
 
 ```bash
-peacebot-ai/
-├── src/
-│ ├── app.py # Flask entry point
-│ ├── peacebot.py # Core AI response logic
-│ ├── utils/
-│ │ ├── config_loader.py # Handles .ini config and fallbacks
-│ │ ├── logger_config.py # JSON-based structured logging
-│ │ ├── retry_utils.py # Retry & exponential backoff logic
-│ │ └── init.py
-│ ├── static/
-│ │ ├── index.html # Frontend chat interface
-│ │ └── js/
-│ │ └── script.js
-│ └── init.py
-│
-├── gratitude_log.json # Logs user gratitude entries
-├── peacebot.ini # Config file (API keys, retry, etc.)
-├── requirements.txt # Python dependencies
-├── .env # (Optional) API key storage
-├── README.md # Project documentation
-└── LICENSE # MIT License
-```
+# Clone the repository
+git clone https://github.com/Tanyasharma71/peacebot-ai.git
+cd peacebot-ai
+
+# Install dependencies
+pip install -r Requirement.txt
+
+# Run the application
+python src/App.py
+
 ---
 
 ## 🚀 Quickstart  
 
 ### 1️⃣ Create and activate a virtual environment  
 
-#### Windows PowerShell
+#### Windows PowerShel
 ```bash
 python -m venv .venv
 .venv\Scripts\Activate.ps1
