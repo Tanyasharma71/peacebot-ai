@@ -5,9 +5,10 @@ from typing import Optional
 # Ensure utils path is available for logger import
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
-from utils.config_loader import get
+from utils.config_loader import get 
 from utils.logger_config import get_logger
 from utils.retry_utils import retry
+# from utils.decorators import safe_execution
 
 # ---------------------------------------------------------------------------
 # Logger Setup
@@ -17,7 +18,7 @@ logger = get_logger(__name__)
 
 
 class PeacebotResponder:
-    logger.info(f'{"=" * 40} START LOG {"=" * 40}')
+    logger.info(f'{"=" * 10} START LOG {"=" * 10}')
     logger.info("Peacebot initialized successfully.")
     """Generates supportive chatbot responses.
 
@@ -86,6 +87,7 @@ class PeacebotResponder:
         logger.debug("PeacebotResponder initialization started.")
         self._initialize_openai()
 
+    # @safe_execution(reraise=False)
     def _initialize_openai(self) -> None:
         """Initialize OpenAI client with fallback handling."""
         if not self._openai_api_key:
@@ -137,6 +139,7 @@ class PeacebotResponder:
         logger.debug("Using local rule-based response generation.")
         return self._generate_locally(sanitized_message)
 
+    # @safe_execution(reraise=True)
     @retry(max_retries=3, base_delay=2)
     def _generate_with_openai(self, prompt: str) -> str:
         """Generate response using OpenAI API."""
@@ -181,6 +184,7 @@ class PeacebotResponder:
             logger.error(f"OpenAI API call failed: {str(e)}")
             raise
 
+    # @safe_execution(reraise=False, fallback_value="I'm here to help you.")
     def _generate_locally(self, prompt: str) -> str:
         """Generate response using rule-based keyword detection."""
         lowered = prompt.lower()
@@ -205,5 +209,5 @@ class PeacebotResponder:
 
 # shutdown logging
 import atexit
-atexit.register(lambda: logger.info(f'{"=" * 40} END LOG {"=" * 40} '))
+atexit.register(lambda: logger.info(f'{"=" * 10} END LOG {"=" * 10} '))
 

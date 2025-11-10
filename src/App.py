@@ -9,8 +9,10 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
 from utils.logger_config import get_logger
 from utils.config_loader import get, getboolean, getint
+from utils.request_id_context import set_request_id, clear_request_id
 from peacebot import PeacebotResponder
 from Gratitude import log_gratitude_noninteractive
+
 
 # ------------------------------------------
 # Logging + Config
@@ -214,17 +216,21 @@ def internal_error(error):
 # Run
 # ------------------------------------------
 if __name__ == "__main__":
-    logger.info("=" * 80)
+    logger.info("=" * 10)
     logger.info("Peacebot server starting", extra={"port": port, "debug": debug})
-    logger.info("=" * 80)
+    logger.info("=" * 10)
 
     try:
+        set_request_id()
         app.run(host="0.0.0.0", port=port, debug=debug, use_reloader=False)
     except KeyboardInterrupt:
+        clear_request_id()
         logger.warning("Peacebot server stopped by user (Ctrl+C)")
     except Exception as e:
+        clear_request_id()
         logger.error(f"Peacebot server crashed: {e}")
     finally:
-        logger.info("=" * 80)
+        clear_request_id()
+        logger.info("=" * 10)
         logger.info("Peacebot server closed")
-        logger.info("=" * 80)
+        logger.info("=" * 10)
