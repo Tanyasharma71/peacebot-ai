@@ -8,12 +8,13 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from utils.config_loader import get 
 from utils.logger_config import get_logger
 from utils.retry_utils import retry
-# from utils.decorators import safe_execution
+from utils.decorators import safe_execution
+
 
 # ---------------------------------------------------------------------------
 # Logger Setup
 # ---------------------------------------------------------------------------
-logger = get_logger(__name__)
+logger = get_logger(__name__) 
 
 
 
@@ -87,7 +88,7 @@ class PeacebotResponder:
         logger.debug("PeacebotResponder initialization started.")
         self._initialize_openai()
 
-    # @safe_execution(reraise=False)
+    @safe_execution(reraise=False)
     def _initialize_openai(self) -> None:
         """Initialize OpenAI client with fallback handling."""
         if not self._openai_api_key:
@@ -139,7 +140,7 @@ class PeacebotResponder:
         logger.debug("Using local rule-based response generation.")
         return self._generate_locally(sanitized_message)
 
-    # @safe_execution(reraise=True)
+    @safe_execution(reraise=True)
     @retry(max_retries=3, base_delay=2)
     def _generate_with_openai(self, prompt: str) -> str:
         """Generate response using OpenAI API."""
@@ -184,7 +185,7 @@ class PeacebotResponder:
             logger.error(f"OpenAI API call failed: {str(e)}")
             raise
 
-    # @safe_execution(reraise=False, fallback_value="I'm here to help you.")
+    @safe_execution(reraise=False, fallback_value="I'm here to help you.")
     def _generate_locally(self, prompt: str) -> str:
         """Generate response using rule-based keyword detection."""
         lowered = prompt.lower()
