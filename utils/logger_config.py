@@ -3,21 +3,31 @@ import json
 import os
 from datetime import datetime
 from logging.handlers import TimedRotatingFileHandler
+from utils.request_id_context import get_request_id,set_request_id
 
+SESSION_REQUEST_ID = set_request_id() 
 
 class JsonFormatter(logging.Formatter):
     """Simple JSON formatter — only essential info (time, level, module, message)."""
     def format(self, record):
         log_data = {
+            "session_id": getattr(record, "request_id", "-"),
             "time": datetime.fromtimestamp(record.created).strftime("%Y-%m-%d %H:%M:%S"),
             "level": record.levelname,
             "module": record.name,
-            "message": record.getMessage(),
+            "message": record.getMessage()
+            
         }
         if record.exc_info:
             log_data["error"] = self.formatException(record.exc_info)
         return json.dumps(log_data, ensure_ascii=False)
 
+
+class RequestIdFilter(logging.Filter):
+    """Injects the request_id into each log record."""
+    def filter(self, record):
+        record.request_id = SESSION_REQUEST_ID
+        return True
 
 def get_logger(name: str = "peacebot"):
     """Return a configured logger with structured log folder: logs/<year>/<month>/<day>/peacebot.log"""
@@ -26,6 +36,8 @@ def get_logger(name: str = "peacebot"):
         return logger
 
     logger.setLevel(logging.INFO)
+
+    
 
     #  Folder structure: logs/YYYY/MonthName/DD
     now = datetime.now()
@@ -53,6 +65,8 @@ def get_logger(name: str = "peacebot"):
         utc=False
     )
     file_handler.setFormatter(JsonFormatter())
+
+    logger.addFilter(RequestIdFilter())
 
     # Prevent duplicates
     logger.handlers.clear()
