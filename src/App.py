@@ -12,7 +12,8 @@ from utils.config_loader import get, getboolean, getint
 from utils.request_id_context import set_request_id, clear_request_id
 from peacebot import PeacebotResponder
 from Gratitude import log_gratitude_noninteractive
-
+# shutdown logging
+import atexit
 
 # ------------------------------------------
 # Logging + Config
@@ -57,6 +58,22 @@ except FileNotFoundError:
     logger.error("Template file not found", extra={"template_path": TEMPLATE_PATH})
     INDEX_TEMPLATE = "<html><body><h1>Template not found</h1></body></html>"
 
+def _safe_end_log():
+    """
+    Safely log the end of execution without raising errors
+    if handlers are already closed during interpreter shutdown.
+    """
+    try:
+        # Iterate over all logger handlers
+        for handler in getattr(logger, "handlers", []):
+            if hasattr(handler, "stream") and handler.stream and not handler.stream.closed:
+                # Log only if the stream is still open
+                logger.info("=" * 20 + " END LOG " + "=" * 20)
+                break
+    except Exception:
+        # Swallow all exceptions to prevent shutdown errors
+        pass
+
 # ------------------------------------------
 # Routes
 # ------------------------------------------
@@ -94,7 +111,8 @@ def api_chat():
         if not message:
             return jsonify({"error": "message is required"}), 400
 
-        logger.info("Received API message", extra={"message": message, "remote": request.remote_addr})
+        # logger.info("Received API message", extra={"message": message, "remote": request.remote_addr})
+        logger.info("Received API message", extra={"user_message": message, "remote": request.remote_addr})
 
         if message.lower() in GRATITUDE_KEYWORDS:
             reply = log_gratitude_interactive_safe()
@@ -104,7 +122,8 @@ def api_chat():
         logger.info("Generated API chat reply", extra={"reply": reply})
         return jsonify({"reply": reply, "type": "chat"})
     except Exception as e:
-        logger.error(f"Error in api_chat: {str(e)}")
+        # logger.error("Error in api_chat", extra={"error_message": str(e)})
+        logger.exception(f"Error in api_chat: {e}")
         return jsonify({"error": "Internal error"}), 500
 
 # ------------------------------------------
@@ -216,9 +235,9 @@ def internal_error(error):
 # Run
 # ------------------------------------------
 if __name__ == "__main__":
-    logger.info("=" * 10)
+    logger.info("=" * 49)
     logger.info("Peacebot server starting", extra={"port": port, "debug": debug})
-    logger.info("=" * 10)
+    logger.info("=" * 49)
 
     try:
         set_request_id()
@@ -231,6 +250,9 @@ if __name__ == "__main__":
         logger.error(f"Peacebot server crashed: {e}")
     finally:
         clear_request_id()
-        logger.info("=" * 10)
+        logger.info("=" * 49)
         logger.info("Peacebot server closed")
-        logger.info("=" * 10)
+        logger.info("=" * 49)
+        # atexit.register(lambda: logger.info(f'{"=" * 10} END LOG {"=" * 10} '))
+
+        atexit.register(_safe_end_log)

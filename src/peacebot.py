@@ -2,6 +2,7 @@ import os
 import sys
 from typing import Optional
 
+
 # Ensure utils path is available for logger import
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
@@ -17,9 +18,8 @@ from utils.decorators import safe_execution
 logger = get_logger(__name__) 
 
 
-
 class PeacebotResponder:
-    logger.info(f'{"=" * 10} START LOG {"=" * 10}')
+    logger.info(f'{"=" * 20} START LOG {"=" * 18}')
     logger.info("Peacebot initialized successfully.")
     """Generates supportive chatbot responses.
 
@@ -84,7 +84,7 @@ class PeacebotResponder:
         self._sdk_mode = get("api", "sdk_mode", fallback="auto")
         self._openai_available = False
         self._client = None
-
+        self.CRISIS_MARKERS = self.CRISIS_MARKERS or []
         logger.debug("PeacebotResponder initialization started.")
         self._initialize_openai()
 
@@ -206,9 +206,4 @@ class PeacebotResponder:
 
         logger.info("Default response used (no keyword match).")
         return self.DEFAULT_RESPONSE
-
-
-# shutdown logging
-import atexit
-atexit.register(lambda: logger.info(f'{"=" * 10} END LOG {"=" * 10} '))
 
