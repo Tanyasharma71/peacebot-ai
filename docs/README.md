@@ -61,7 +61,7 @@ peacebot-ai/
 │
 ├── gratitude_log.json # Logs user gratitude entries
 ├── peacebot.ini # Config file (API keys, retry, etc.)
-├── requirements.txt # Python dependencies
+├── requirement.txt # Python dependencies
 ├── .env # (Optional) API key storage
 ├── README.md # Project documentation
 └── LICENSE # MIT License
@@ -168,6 +168,91 @@ Open an issue in the Issues tab with descriptive titles and clear acceptance cri
 | #5  | Web Dashboard             | Visualize user moods and gratitude logs          |
 
 
+
+---
+
+## 📑 Contribution Guidelines
+
+<div align="center">
+  <img src="https://user-images.githubusercontent.com/74038190/212747903-e9bdf048-2dc8-41f9-b973-0e72ff07bfba.gif" width="400">
+</div>
+
+- ⭐ **Star** the repository to show your support.  
+- 🍴 **Fork** the repo and create a new branch for your feature, fix, or idea.  
+- 💻 **Make your changes** — code, design, documentation, anything that improves the project!  
+- ✅ **Commit** your updates with a meaningful message.  
+- 🔁 **Create a Pull Request** — our team will review, suggest, and merge if all looks great.  
+- 🖼️ Add screenshots or demo links if applicable.  
+
+For more detailed steps, see the [**CONTRIBUTING.md**](https://github.com/Tanyasharma71/peacebot-ai/blob/main/CONTRIBUTING.md) file.
+
+---
+
+## 🧡 Contributing is Fun!
+
+We welcome **all contributions and ideas** — whether it's:
+- A new feature ✨  
+- UI/UX improvements 🎨  
+- Bug fixes 🐛  
+- or Documentation updates 📘  
+
+Your voice matters!  
+Feel free to open issues, start discussions, or reach out with feedback 💬
+
+---
+
+## 👥 Contributors
+
+Thanks to these wonderful people for contributing to **PeaceBot-AI** 💖
+
+[![Contributors](https://contrib.rocks/image?repo=Tanyasharma71/peacebot-ai)](https://github.com/Tanyasharma71/peacebot-ai/graphs/contributors)
+
+<p align="center">
+  <a href="https://github.com/Tanyasharma71/peacebot-ai/graphs/contributors">
+    <img 
+      src="https://api.vaunt.dev/v1/github/entities/Tanyasharma71/repositories/peacebot-ai/contributors?format=svg&limit=54" 
+      width="900" 
+      height="400" 
+      alt="Contributors Graph by Vaunt.dev" 
+    />
+  </a>
+</p>
+
+
+
+---
+
+### 🧪 Running the Test Suite
+
+Peacebot now includes a robust test suite for its core backend utilities and tracing middleware.
+
+#### 1️⃣ Run All Tests
+
+From your project root:
+
+    pytest -v
+
+#### 2️⃣ Run a Specific Test File
+
+For example, to only test the retry utility:
+
+    pytest tests/test_retry_utils.py -v
+
+#### 3️⃣ ✅ Expected Output
+
+    ===================== test session starts =====================
+    collected 9 items
+
+    tests/test_request_id_context.py ....                      [ 25%]
+    tests/test_logger_config.py ....                           [ 50%]
+    tests/test_retry_utils.py ....                             [ 75%]
+    tests/test_decorators.py ....                              [100%]
+
+    ====================== 9 passed in 1.52s ======================
+
+
+---
+
 ### 📄 License
 This project is licensed under the MIT License.
 See the `LICENSE` file for details.
@@ -177,3 +262,4 @@ See the `LICENSE` file for details.
 “The greatest weapon against stress is our ability to choose one thought over another.” — William James
 
 ⭐ If you find this project helpful, consider giving it a star on GitHub!
+
