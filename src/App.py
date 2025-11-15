@@ -1,8 +1,9 @@
 import os
 import sys
 import json
-from datetime import date
-from flask import Flask, render_template_string, request, jsonify, send_from_directory
+
+from datetime import date, datetime, UTC
+from flask import Flask, render_template_string, request, jsonify, send_from_directory, make_response
 from flask.cli import load_dotenv
 from dotenv import load_dotenv
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
@@ -14,6 +15,7 @@ from peacebot import PeacebotResponder
 from Gratitude import log_gratitude_noninteractive
 # shutdown logging
 import atexit
+import time
 
 # ------------------------------------------
 # Logging + Config
@@ -230,6 +232,42 @@ def not_found(error):
 def internal_error(error):
     logger.error(f"Internal server error: {str(error)}")
     return jsonify({"error": "Internal server error"}), 500
+
+
+@app.route("/healthz/llm", methods=["GET"])
+def health_llm():
+    """
+    Simple health check endpoint for Peacebot LLM pipeline.
+    Returns model info, latency, and availability status.
+    """
+    start_time = time.time()
+    status = "healthy"
+    model_name = getattr(responder, "_openai_model", "local-rule-based")
+    sdk_mode = getattr(responder, "_sdk_mode", "unknown")
+
+    try:
+        # Try a minimal generation to confirm model availability
+        responder.generate_response("ping")
+    except Exception as e:
+        logger.error(f"Health check failed: {e}")
+        status = "unhealthy"
+
+    latency_ms = round((time.time() - start_time) * 1000, 2)
+
+    result = {
+        "status": status,
+        "latency_ms": latency_ms,
+        "model": model_name,
+        "sdk_mode": sdk_mode,
+        # "timestamp": datetime.utcnow().isoformat() + "Z"
+        "timestamp": datetime.now(UTC).isoformat()
+    }
+
+    response = make_response(jsonify(result), 200 if status == "healthy" else 503)
+    response.headers["X-Model-Version"] = model_name
+    response.headers["X-Latency-MS"] = str(latency_ms)
+    return response
+
 
 # ------------------------------------------
 # Run
