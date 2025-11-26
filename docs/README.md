@@ -61,7 +61,7 @@ peacebot-ai/
 │
 ├── gratitude_log.json # Logs user gratitude entries
 ├── peacebot.ini # Config file (API keys, retry, etc.)
-├── requirement.txt # Python dependencies
+├── requirements.txt # Python dependencies
 ├── .env # (Optional) API key storage
 ├── README.md # Project documentation
 └── LICENSE # MIT License
@@ -84,7 +84,7 @@ source .venv/bin/activate
 ```
 ### 2️⃣ Install dependencies
 ```bash
-pip install -r requirement.txt
+pip install -r requirements.txt
 ```
 ### 3️⃣ Configure your API key
 **Option 1 — Using Environment Variable**
