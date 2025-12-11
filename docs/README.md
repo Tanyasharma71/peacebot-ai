@@ -6,7 +6,37 @@
 ![GitHub issues](https://img.shields.io/github/issues/Tanyasharma71/peacebot-ai?style=for-the-badge)
 ![License](https://img.shields.io/github/license/Tanyasharma71/peacebot-ai?style=for-the-badge)
 
+
+# 📑 **Table of Contents**
+
+* [🧘‍♀️ Introduction](#🧘‍♀️-introduction)
+* [💡 Key Features](#💡-key-features)
+* [🧰 Tech Stack](#🧰-tech-stack)
+* [🗂️ Project Structure](#🗂️-project-structure)
+* [🚀 Quickstart](#🚀-quickstart)
+
+  * [1️⃣ Create and activate a virtual environment](#1️⃣-create-and-activate-a-virtual-environment)
+  * [2️⃣ Install dependencies](#2️⃣-install-dependencies)
+  * [3️⃣ Configure your API key](#3️⃣-configure-your-api-key)
+  * [4️⃣ Run the App](#4️⃣-run-the-app)
+  * [5️⃣ API Usage](#5️⃣-api-usage)
+* [🧩 Configuration (peacebot.ini)](#🧩-configuration-peacebotini)
+* [🔄 Logging Example](#🔄-logging-example)
+* [🌱 Future Scope](#🌱-future-scope)
+* [🤝 Contributing](#🤝-contributing)
+* [📑 Contribution Guidelines](#📑-contribution-guidelines)
+* [🧡 Contributing is Fun!](#🧡-contributing-is-fun)
+* [👥 Contributors](#👥-contributors)
+* [🧪 Running the Test Suite](#🧪-running-the-test-suite)
+
+  * [1️⃣ Run All Tests](#1️⃣-run-all-tests)
+  * [2️⃣ Run a Specific Test File](#2️⃣-run-a-specific-test-file)
+  * [3️⃣ Expected Output](#3️⃣-expected-output)
+* [📄 License](#📄-license)
+* [💬 A Final Note](#💬-a-final-note)
+
 ---
+
 
 ## 🧘‍♀️ Introduction  
 
