@@ -1,0 +1,14 @@
+flask
+transformers
+torch
+scikit-learn
+pandas
+nltk
+numpy
+gunicorn
+python-dotenv
+requests
+openai
+python-json-logger
+pytest
+redis
