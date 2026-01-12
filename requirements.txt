@@ -11,3 +11,4 @@ requests
 openai
 python-json-logger
 pytest
+redis
