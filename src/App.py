@@ -88,13 +88,26 @@ def index():
         user_message = (request.form.get("message") or "").strip()
         logger.info("Received message", extra={"message": user_message, "remote": request.remote_addr})
 
-        if user_message.lower() in GRATITUDE_KEYWORDS:
+        if not user_message:
+            bot_reply = "Please enter a message so I can help you 🙂"
+        elif user_message.lower() in GRATITUDE_KEYWORDS:
             bot_reply = log_gratitude_interactive_safe()
         else:
             bot_reply = responder.generate_response(user_message)
+
+            if not bot_reply or not bot_reply.strip():
+                bot_reply = (
+                    "I'm not sure I understood that. "
+                    "Could you try rephrasing your question?"
+                )
+
             logger.info("Generated chat reply", extra={"reply": bot_reply})
 
-    return render_template_string(INDEX_TEMPLATE, user_message=user_message, bot_reply=bot_reply)
+    return render_template_string(
+        INDEX_TEMPLATE,
+        user_message=user_message,
+        bot_reply=bot_reply
+    )
 
 @app.route("/static/<path:filename>")
 def static_assets(filename: str):
@@ -111,9 +124,11 @@ def api_chat():
         message = (data.get("message") or "").strip()
 
         if not message:
-            return jsonify({"error": "message is required"}), 400
+            return jsonify({
+                "reply": "Please enter a message before sending.",
+                "type": "validation_error"
+            }), 400
 
-        # logger.info("Received API message", extra={"message": message, "remote": request.remote_addr})
         logger.info("Received API message", extra={"user_message": message, "remote": request.remote_addr})
 
         if message.lower() in GRATITUDE_KEYWORDS:
@@ -121,16 +136,27 @@ def api_chat():
             return jsonify({"reply": reply, "type": "gratitude"})
 
         reply = responder.generate_response(message)
+
+        if not reply or not reply.strip():
+            reply = (
+                "I'm not sure I understood that. "
+                "Could you try rephrasing your question?"
+            )
+
         logger.info("Generated API chat reply", extra={"reply": reply})
         return jsonify({"reply": reply, "type": "chat"})
+
     except Exception as e:
-        # logger.error("Error in api_chat", extra={"error_message": str(e)})
         logger.exception(f"Error in api_chat: {e}")
-        return jsonify({"error": "Internal error"}), 500
+        return jsonify({
+            "reply": "Sorry, something went wrong on my side. Please try again later.",
+            "type": "server_error"
+        }), 500
+
 
 # ------------------------------------------
 # Mood Tracker Routes
-# ------------------------------------------
+# ------------------------return js------------------
 @app.route("/mood")
 def mood_page():
     html = """
