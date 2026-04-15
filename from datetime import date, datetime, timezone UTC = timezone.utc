@@ -2,8 +2,6 @@ import os
 import sys
 import json
 
-from datetime import date, datetime, timezone
-UTC = timezone.utc
 from flask import Flask, render_template_string, request, jsonify, send_from_directory, make_response
 from flask.cli import load_dotenv
 from dotenv import load_dotenv
@@ -28,7 +26,7 @@ app = Flask(__name__)
 responder = PeacebotResponder()
 
 debug = getboolean("flask", "debug", fallback=True)
-port = getint("flask", "port", fallback=5001)
+port = getint("flask", "port", fallback=5000)
 
 # ------------------------------------------
 # Paths and Files
