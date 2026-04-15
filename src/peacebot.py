@@ -1,4 +1,5 @@
 import os
+import random
 import sys
 from typing import Optional
 
@@ -64,9 +65,10 @@ class PeacebotResponder:
     )
 
     DEFAULT_RESPONSE = (
-        "Thank you for sharing. I'm here to listen. "
-        "Could you tell me a bit more about what you're experiencing right now? "
-        "If you want, we can try a brief grounding exercise together."
+        "Hey, I’m really glad you shared that with me 🤍",
+    "That sounds important—I'm here for you",
+    "Thanks for opening up, that takes courage",
+    "I hear you. Do you want to tell me a bit more?"
     )
 
     SYSTEM_INSTRUCTIONS = (
@@ -205,5 +207,5 @@ class PeacebotResponder:
             return self.ANGER_RESPONSE
 
         logger.info("Default response used (no keyword match).")
-        return self.DEFAULT_RESPONSE
+        return random.choice(self.DEFAULT_RESPONSE)
 

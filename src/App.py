@@ -2,7 +2,7 @@ import os
 import sys
 import json
 
-from datetime import date, datetime, UTC
+from datetime import date, datetime, timezone
 from flask import Flask, render_template_string, request, jsonify, send_from_directory, make_response
 from flask.cli import load_dotenv
 from dotenv import load_dotenv
@@ -286,7 +286,7 @@ def health_llm():
         "model": model_name,
         "sdk_mode": sdk_mode,
         # "timestamp": datetime.utcnow().isoformat() + "Z"
-        "timestamp": datetime.now(UTC).isoformat()
+        "timestamp": datetime.now(timezone.utc).isoformat()
     }
 
     response = make_response(jsonify(result), 200 if status == "healthy" else 503)
