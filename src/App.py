@@ -124,8 +124,10 @@ def api_chat():
         message = (data.get("message") or "").strip()
 
         if not message:
+            msg = "Please enter a message before sending."
             return jsonify({
-                "reply": "Please enter a message before sending.",
+                "error": msg,
+                "reply": msg,
                 "type": "validation_error"
             }), 400
 
@@ -148,8 +150,10 @@ def api_chat():
 
     except Exception as e:
         logger.exception(f"Error in api_chat: {e}")
+        msg = "Sorry, something went wrong on my side. Please try again later."
         return jsonify({
-            "reply": "Sorry, something went wrong on my side. Please try again later.",
+            "error": msg,
+            "reply": msg,
             "type": "server_error"
         }), 500
 
