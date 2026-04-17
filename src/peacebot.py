@@ -77,22 +77,26 @@ class PeacebotResponder:
     )
 
     def __init__(self) -> None:
-        """Initialize PeacebotResponder and detect OpenAI configuration."""
-        # self._openai_api_key = get("api", "openai_key", fallback=os.getenv("OPENAI_API_KEY"))
-        self._openai_api_key = get("api","openai_key",fallback=os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_APIKEY"))
-        self._openai_model = get("api", "openai_model", fallback="gpt-4o-mini")
-        self._sdk_mode = get("api", "sdk_mode", fallback="auto")
+        """Initialize PeacebotResponder and detect OpenAI / Gemini configuration."""
+        self._openai_api_key = get("api", "openai_key", fallback=None) or os.getenv("OPENAI_API_KEY") or os.getenv("OPENAI_APIKEY")
+        self._openai_model   = get("api", "openai_model", fallback="gpt-4o-mini")
+        self._sdk_mode       = get("api", "sdk_mode", fallback="auto")
+        self._gemini_api_key = get("api", "gemini_key", fallback=None) or os.getenv("GEMINI_API_KEY")
+        self._gemini_model   = get("api", "gemini_model", fallback="gemini-1.5-flash")
         self._openai_available = False
-        self._client = None
-        self.CRISIS_MARKERS = self.CRISIS_MARKERS or []
+        self._client           = None
+        self._active_provider  = "local"
+        self.CRISIS_MARKERS    = self.CRISIS_MARKERS or []
         logger.debug("PeacebotResponder initialization started.")
         self._initialize_openai()
+        if not self._openai_available:
+            self._initialize_gemini_compat()
 
     @safe_execution(reraise=False)
     def _initialize_openai(self) -> None:
         """Initialize OpenAI client with fallback handling."""
         if not self._openai_api_key:
-            logger.info("No OpenAI API key found. Using local responses.")
+            logger.info("No OpenAI API key found. Will try Gemini fallback.")
             return
 
         try:
@@ -100,7 +104,8 @@ class PeacebotResponder:
             from openai import OpenAI
             self._client = OpenAI(api_key=self._openai_api_key)
             self._openai_available = True
-            self._sdk_mode = "new"
+            self._sdk_mode        = "new"
+            self._active_provider = "openai"
             logger.info("OpenAI client initialized (new SDK).")
             return
         except ImportError:
@@ -112,14 +117,44 @@ class PeacebotResponder:
             # Try legacy OpenAI SDK (<1.0)
             import openai
             openai.api_key = self._openai_api_key
-            self._client = openai
+            self._client          = openai
             self._openai_available = True
-            self._sdk_mode = "legacy"
+            self._sdk_mode        = "legacy"
+            self._active_provider = "openai"
             logger.info("OpenAI client initialized (legacy SDK).")
         except ImportError:
-            logger.warning("OpenAI SDK not installed. Using local responses.")
+            logger.warning("OpenAI SDK not installed. Will try Gemini fallback.")
         except Exception as e:
             logger.error(f"Error initializing legacy OpenAI SDK: {str(e)}")
+
+    @safe_execution(reraise=False)
+    def _initialize_gemini_compat(self) -> None:
+        """
+        Initialize Gemini as a fallback using Google's OpenAI-compatible endpoint.
+
+        This reuses the existing OpenAI SDK (already a dependency) pointed at
+        Google's compatible base URL, so _generate_with_openai() works unchanged.
+        Only called when no OpenAI key is present.
+        """
+        if not self._gemini_api_key:
+            logger.info("No Gemini API key found. Using local rule-based responses.")
+            return
+
+        try:
+            from openai import OpenAI
+            self._client = OpenAI(
+                api_key=self._gemini_api_key,
+                base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+            )
+            self._openai_available = True   
+            self._sdk_mode        = "new"
+            self._openai_model    = self._gemini_model   
+            self._active_provider = "gemini"
+            logger.info(f"Gemini fallback initialized via OpenAI-compatible endpoint ({self._gemini_model}).")
+        except ImportError:
+            logger.warning("OpenAI SDK not installed. Cannot use Gemini-compat mode.")
+        except Exception as e:
+            logger.error(f"Gemini fallback initialization failed: {str(e)}")
 
     def generate_response(self, user_message: str) -> str:
         """Return a supportive response; use OpenAI if configured."""
