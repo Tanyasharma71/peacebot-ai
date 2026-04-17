@@ -12,3 +12,4 @@ openai
 python-json-logger
 pytest
 redis
+vaderSentiment
