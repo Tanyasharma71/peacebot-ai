@@ -2,7 +2,7 @@ import os
 import sys
 import json
 
-from datetime import date, datetime, UTC
+from datetime import date, datetime, timezone
 from flask import Flask, render_template_string, request, jsonify, send_from_directory, make_response
 from flask.cli import load_dotenv
 from dotenv import load_dotenv
@@ -286,6 +286,12 @@ def health_llm():
     latency_ms = round((time.time() - start_time) * 1000, 2)
 
     result = {
+        "status": status,
+        "latency_ms": latency_ms,
+        "model": model_name,
+        "sdk_mode": sdk_mode,
+        # "timestamp": datetime.utcnow().isoformat() + "Z"
+        "timestamp": datetime.now(timezone.utc).isoformat()
         "status":          status,
         "latency_ms":      latency_ms,
         "model":           model_name,
