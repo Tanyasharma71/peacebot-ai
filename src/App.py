@@ -11,6 +11,7 @@ sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 from utils.logger_config import get_logger
 from utils.config_loader import get, getboolean, getint
 from utils.request_id_context import set_request_id, clear_request_id
+from utils.emotion import detect_emotion
 from peacebot import PeacebotResponder
 from Gratitude import log_gratitude_noninteractive
 # shutdown logging
@@ -135,6 +136,9 @@ def api_chat():
             reply = log_gratitude_interactive_safe()
             return jsonify({"reply": reply, "type": "gratitude"})
 
+        emotion = detect_emotion(message)
+        logger.debug(f"Emotion detected: {emotion['category']} (score={emotion['score']})")
+
         reply = responder.generate_response(message)
 
         if not reply or not reply.strip():
@@ -144,7 +148,7 @@ def api_chat():
             )
 
         logger.info("Generated API chat reply", extra={"reply": reply})
-        return jsonify({"reply": reply, "type": "chat"})
+        return jsonify({"reply": reply, "type": "chat", "emotion": emotion})
 
     except Exception as e:
         logger.exception(f"Error in api_chat: {e}")
@@ -267,9 +271,10 @@ def health_llm():
     Returns model info, latency, and availability status.
     """
     start_time = time.time()
-    status = "healthy"
+    status    = "healthy"
     model_name = getattr(responder, "_openai_model", "local-rule-based")
-    sdk_mode = getattr(responder, "_sdk_mode", "unknown")
+    sdk_mode   = getattr(responder, "_sdk_mode", "unknown")
+    provider   = getattr(responder, "_active_provider", "local")
 
     try:
         # Try a minimal generation to confirm model availability
@@ -287,6 +292,12 @@ def health_llm():
         "sdk_mode": sdk_mode,
         # "timestamp": datetime.utcnow().isoformat() + "Z"
         "timestamp": datetime.now(timezone.utc).isoformat()
+        "status":          status,
+        "latency_ms":      latency_ms,
+        "model":           model_name,
+        "sdk_mode":        sdk_mode,
+        "active_provider": provider,
+        "timestamp":       datetime.now(UTC).isoformat()
     }
 
     response = make_response(jsonify(result), 200 if status == "healthy" else 503)
