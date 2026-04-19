@@ -17,7 +17,8 @@ def test_index_get(client):
 def test_api_chat_missing_message(client):
     resp = client.post("/api/chat", json={})
     assert resp.status_code == 400
-    assert "error" in resp.get_json()
+    data = resp.get_json()
+    assert data["type"] == "validation_error"
 
 
 def test_api_chat_normal_message(client):
