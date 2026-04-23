@@ -80,6 +80,7 @@
 
         form { margin-top: 12px; }
         label { display: block; margin: 0 0 8px 4px; color: var(--muted); font-size: 14px; }
+        
 
         textarea {
             width: 100%;
@@ -133,6 +134,8 @@
         }
         .chip:hover { background: rgba(92, 141, 246, 0.12); }
 
+        
+
         .chat {
             margin-top: 20px;
             display: grid;
@@ -172,6 +175,7 @@
             0%, 100% { transform: scale(0.85); opacity: 0.6; }
             50% { transform: scale(1.05); opacity: 1; }
         }
+        
 
         /* ── Emotion Badge ─────────────────────────────────── */
         .emotion-badge {
@@ -216,7 +220,8 @@
                 <button class="btn" type="submit" id="sendBtn">Send</button>
             </div>
             <div class="chips">
-                <span class="chip" data-fill="I feel anxious lately and I can't relax.">Feeling anxious</span>
+                <p id="timerText" style="color:red; text-align:center;"></p>
+                <span class="chip" id="defaultOption" data-fill="I feel anxious lately and I can't relax.">Feeling anxious</span>
                 <span class="chip" data-fill="I feel sad and unmotivated today.">Feeling low</span>
                 <span class="chip" data-fill="gratitude">Gratitude</span>
                 <span class="chip" data-fill="Can we do a short grounding exercise?">Grounding</span>
@@ -361,13 +366,19 @@
                 removeTyping();
                 appendMessage('bot', 'Network error. Please check your connection and try again.');
             } finally {
-                btn.disabled = false; btn.textContent = 'Send';
+                btn.disabled = false; 
+                btn.textContent = 'Send';
                 textarea.focus();
+
+            if (!window.autoTriggered) {
+                startAutoSelect();
             }
         }
+    }
 
         chips.forEach(chip => {
             chip.addEventListener('click', () => {
+                userClicked(); 
                 const txt = chip.getAttribute('data-fill') || '';
                 sendMessage(txt);
             });
@@ -393,6 +404,45 @@
 
         loadTheme();
         renderHistory(loadHistory());
+    
+
+
+        
+        let timer;
+        let countdown;
+
+        function startAutoSelect() {
+            clearTimeout(timer);
+            clearInterval(countdown);
+
+            let seconds = 10;
+
+            countdown = setInterval(() => {
+                if (seconds <= 0) {
+                    clearInterval(countdown);
+                    document.getElementById("timerText").innerText = "";
+                    return;
+                }
+
+                document.getElementById("timerText").innerText =
+                    "Auto selecting in " + seconds + " sec...";
+
+                seconds--;
+            }, 1000);
+
+            timer = setTimeout(() => {
+                let text = document.getElementById("defaultOption").getAttribute("data-fill");
+                sendMessage(text);
+            }, 10000);
+        }
+
+
+
+        window.onload = function() {
+            startAutoSelect();
+        };
+
+
     </script>
 </body>
 </html>
