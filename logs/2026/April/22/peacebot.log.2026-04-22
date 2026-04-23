@@ -1,0 +1,28 @@
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:36", "level": "INFO", "module": "peacebot", "message": "==================== START LOG =================="}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:36", "level": "INFO", "module": "peacebot", "message": "Peacebot initialized successfully."}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:36", "level": "INFO", "module": "peacebot", "message": "No OpenAI API key found. Using local responses."}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:36", "level": "INFO", "module": "__main__", "message": "Loaded index template successfully"}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:36", "level": "INFO", "module": "__main__", "message": "================================================="}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:36", "level": "INFO", "module": "__main__", "message": "Peacebot server starting"}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:36", "level": "INFO", "module": "__main__", "message": "================================================="}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:40", "level": "WARNING", "module": "__main__", "message": "404 Not Found"}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:40", "level": "WARNING", "module": "__main__", "message": "404 Not Found"}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:47", "level": "INFO", "module": "__main__", "message": "Received API message"}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:47", "level": "INFO", "module": "peacebot", "message": "Default response used (no keyword match)."}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:46:47", "level": "INFO", "module": "__main__", "message": "Generated API chat reply"}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:52:53", "level": "INFO", "module": "__main__", "message": "================================================="}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:52:53", "level": "INFO", "module": "__main__", "message": "Peacebot server closed"}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:52:53", "level": "INFO", "module": "__main__", "message": "================================================="}
+{"session_id": "dcb8dc7e-0d12-4f3e-8f13-9b9b28036390", "time": "2026-04-22 23:52:53", "level": "INFO", "module": "__main__", "message": "==================== END LOG ===================="}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:52:58", "level": "INFO", "module": "peacebot", "message": "==================== START LOG =================="}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:52:58", "level": "INFO", "module": "peacebot", "message": "Peacebot initialized successfully."}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:52:58", "level": "INFO", "module": "peacebot", "message": "No OpenAI API key found. Using local responses."}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:52:58", "level": "INFO", "module": "__main__", "message": "Loaded index template successfully"}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:52:58", "level": "INFO", "module": "__main__", "message": "================================================="}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:52:58", "level": "INFO", "module": "__main__", "message": "Peacebot server starting"}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:52:58", "level": "INFO", "module": "__main__", "message": "================================================="}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:53:01", "level": "WARNING", "module": "__main__", "message": "404 Not Found"}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:53:09", "level": "INFO", "module": "__main__", "message": "Received API message"}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:53:09", "level": "INFO", "module": "peacebot", "message": "Default response used (no keyword match)."}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:53:09", "level": "INFO", "module": "__main__", "message": "Generated API chat reply"}
+{"session_id": "6613041c-7995-47ed-a18c-cf03c97d99ac", "time": "2026-04-22 23:53:14", "level": "WARNING", "module": "__main__", "message": "404 Not Found"}

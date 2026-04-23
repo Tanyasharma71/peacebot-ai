@@ -1,1 +1,32 @@
-[]
+[
+  {
+    "date": "2026-04-15",
+    "mood": "Happy",
+    "note": "today i felt so happy \n"
+  },
+  {
+    "date": "2026-04-15",
+    "mood": "Happy",
+    "note": "today i felt so happy \n"
+  },
+  {
+    "date": "2026-04-15",
+    "mood": "Neutral",
+    "note": "today i felt so happy \n"
+  },
+  {
+    "date": "2026-04-15",
+    "mood": "Neutral",
+    "note": " \ndue to stress"
+  },
+  {
+    "date": "2026-04-16",
+    "mood": "Anxious",
+    "note": ""
+  },
+  {
+    "date": "2026-04-08",
+    "mood": "Sad",
+    "note": ""
+  }
+]
