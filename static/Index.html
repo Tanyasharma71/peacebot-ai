@@ -176,6 +176,22 @@
             50% { transform: scale(1.05); opacity: 1; }
         }
         
+
+        /* ── Emotion Badge ─────────────────────────────────── */
+        .emotion-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 999px;
+            margin-top: 6px;
+            opacity: 0.88;
+            transition: opacity 200ms ease;
+            letter-spacing: 0.2px;
+        }
+        .emotion-badge:hover { opacity: 1; }
     </style>
 </head>
 <body>
@@ -242,7 +258,7 @@
         function saveHistory(items){ localStorage.setItem(STORAGE_KEY, JSON.stringify(items)); }
         function loadHistory(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; } catch(e){ return []; } }
 
-        function appendMessage(role, content) {
+        function appendMessage(role, content, emotion = null) {
             const wrap = document.createElement('div');
             wrap.className = `bubble ${role}`;
             const from = document.createElement('div');
@@ -253,6 +269,17 @@
             p.textContent = content;
             wrap.appendChild(from);
             wrap.appendChild(p);
+
+            if (role === 'user' && emotion && emotion.category) {
+                const badge = document.createElement('span');
+                badge.className      = 'emotion-badge';
+                badge.style.background = emotion.color + '22';
+                badge.style.color      = emotion.color;
+                badge.style.border     = `1px solid ${emotion.color}66`;
+                badge.textContent      = `${emotion.emoji} ${emotion.label}`;
+                wrap.appendChild(badge);
+            }
+
             chat.appendChild(wrap);
             chat.scrollTop = chat.scrollHeight;
         }
@@ -276,7 +303,18 @@
                 appendMessage('bot', "Welcome. I'm here to listen. What would you like to share today?");
                 return;
             }
-            items.forEach(m => appendMessage(m.role, m.content));
+            // Restore emotion badges from saved history
+            items.forEach(m => appendMessage(m.role, m.content, m.emotion || null));
+        }
+
+        // Store per-session emotion counts in localStorage for future analytics
+        function recordEmotionStat(emotion) {
+            if (!emotion || !emotion.category) return;
+            const key   = 'peacebot_emotion_stats_v1';
+            const stats = JSON.parse(localStorage.getItem(key) || '{}');
+            stats[emotion.category] = (stats[emotion.category] || 0) + 1;
+            stats._lastUpdated = new Date().toISOString();
+            localStorage.setItem(key, JSON.stringify(stats));
         }
 
         async function sendMessage(text){
@@ -286,25 +324,43 @@
             btn.disabled = true; btn.textContent = 'Sending…';
 
             const history = loadHistory();
-            history.push({ role: 'user', content: trimmed });
+            // Optimistically add user message (emotion added after API response)
             appendMessage('user', trimmed);
             appendTyping();
-            saveHistory(history);
 
             try {
-                const res = await fetch('/api/chat', {
+                const res  = await fetch('/api/chat', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: trimmed })
                 });
                 const data = await res.json();
                 removeTyping();
+
+                const emotion = data.emotion || null;
+
+                // Re-render last user bubble with emotion badge
+                const bubbles = chat.querySelectorAll('.bubble.user');
+                if (bubbles.length > 0 && emotion && emotion.category) {
+                    const lastUserBubble = bubbles[bubbles.length - 1];
+                    const badge = document.createElement('span');
+                    badge.className      = 'emotion-badge';
+                    badge.style.background = emotion.color + '22';
+                    badge.style.color      = emotion.color;
+                    badge.style.border     = `1px solid ${emotion.color}66`;
+                    badge.textContent      = `${emotion.emoji} ${emotion.label}`;
+                    lastUserBubble.appendChild(badge);
+                }
+
                 if(!res.ok || !data.reply){
                     appendMessage('bot', 'Sorry, I could not respond right now. Please try again.');
                 } else {
                     appendMessage('bot', data.reply);
-                    history.push({ role: 'bot', content: data.reply });
+                    // Save to history with emotion metadata for badge restore on reload
+                    history.push({ role: 'user', content: trimmed, emotion });
+                    history.push({ role: 'bot',  content: data.reply });
                     saveHistory(history);
+                    recordEmotionStat(emotion);
                 }
             } catch (e) {
                 removeTyping();
