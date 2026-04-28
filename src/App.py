@@ -2,12 +2,8 @@ import os
 import sys
 import json
 
-from datetime import date, datetime, timezone
-feature/mood-auto-tracker
-UTC = timezone.utc
-main
+from datetime import date, datetime, timezone, UTC
 from flask import Flask, render_template_string, request, jsonify, send_from_directory, make_response
-from flask.cli import load_dotenv
 from dotenv import load_dotenv
 sys.path.append(os.path.dirname(os.path.dirname(__file__)))
 
@@ -70,14 +66,11 @@ def _safe_end_log():
     if handlers are already closed during interpreter shutdown.
     """
     try:
-        # Iterate over all logger handlers
         for handler in getattr(logger, "handlers", []):
             if hasattr(handler, "stream") and handler.stream and not handler.stream.closed:
-                # Log only if the stream is still open
                 logger.info("=" * 20 + " END LOG " + "=" * 20)
                 break
     except Exception:
-        # Swallow all exceptions to prevent shutdown errors
         pass
 
 # ------------------------------------------
@@ -167,7 +160,7 @@ def api_chat():
 
 # ------------------------------------------
 # Mood Tracker Routes
-# ------------------------return js------------------
+# ------------------------------------------
 @app.route("/mood")
 def mood_page():
     html = """
@@ -278,13 +271,12 @@ def health_llm():
     Returns model info, latency, and availability status.
     """
     start_time = time.time()
-    status    = "healthy"
+    status = "healthy"
     model_name = getattr(responder, "_openai_model", "local-rule-based")
-    sdk_mode   = getattr(responder, "_sdk_mode", "unknown")
-    provider   = getattr(responder, "_active_provider", "local")
+    sdk_mode = getattr(responder, "_sdk_mode", "unknown")
+    provider = getattr(responder, "_active_provider", "local")
 
     try:
-        # Try a minimal generation to confirm model availability
         responder.generate_response("ping")
     except Exception as e:
         logger.error(f"Health check failed: {e}")
@@ -297,14 +289,8 @@ def health_llm():
         "latency_ms": latency_ms,
         "model": model_name,
         "sdk_mode": sdk_mode,
-        # "timestamp": datetime.utcnow().isoformat() + "Z"
-        "timestamp": datetime.now(timezone.utc).isoformat()
-        "status":          status,
-        "latency_ms":      latency_ms,
-        "model":           model_name,
-        "sdk_mode":        sdk_mode,
         "active_provider": provider,
-        "timestamp":       datetime.now(UTC).isoformat()
+        "timestamp": datetime.now(UTC).isoformat()
     }
 
     response = make_response(jsonify(result), 200 if status == "healthy" else 503)
@@ -335,6 +321,4 @@ if __name__ == "__main__":
         logger.info("=" * 49)
         logger.info("Peacebot server closed")
         logger.info("=" * 49)
-        # atexit.register(lambda: logger.info(f'{"=" * 10} END LOG {"=" * 10} '))
-
         atexit.register(_safe_end_log)
