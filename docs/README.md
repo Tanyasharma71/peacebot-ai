@@ -72,30 +72,44 @@ It aims to create a **safe, non-judgmental, and supportive environment** through
 ---
 
 ## 🗂️ Project Structure  
-
-```bash
 peacebot-ai/
-├── src/
-│ ├── app.py # Flask entry point
-│ ├── peacebot.py # Core AI response logic
-│ ├── utils/
-│ │ ├── config_loader.py # Handles .ini config and fallbacks
-│ │ ├── logger_config.py # JSON-based structured logging
-│ │ ├── retry_utils.py # Retry & exponential backoff logic
-│ │ └── init.py
-│ ├── static/
-│ │ ├── index.html # Frontend chat interface
-│ │ └── js/
-│ │ └── script.js
-│ └── init.py
+├── .github/                      # GitHub templates and workflows
+│   ├── ISSUE_TEMPLATE/
+│   │   ├── bug_report.md
+│   │   ├── documentation_update.md
+│   │   ├── enhancement_request.md
+│   │   ├── feature_request.md
+│   │   └── other.md
+│   └── pull_request_template.md
 │
-├── gratitude_log.json # Logs user gratitude entries
-├── peacebot.ini # Config file (API keys, retry, etc.)
-├── requirements.txt # Python dependencies
-├── .env # (Optional) API key storage
-├── README.md # Project documentation
-└── LICENSE # MIT License
-```
+├── utils/                        # Core utility modules
+│   ├── __init__.py
+│   ├── config_loader.py          # Configuration management
+│   ├── decorators.py             # Common decorators
+│   ├── logger_config.py          # Logging configuration
+│   ├── request_id_context.py     # Request tracing utilities
+│   └── retry_utils.py            # Retry & backoff logic
+│
+├── tests/                        # Unit and integration tests
+│   ├── test_app.py
+│   ├── test_decorators.py
+│   ├── test_gratitude.py
+│   ├── test_health.py
+│   ├── test_logger_config.py
+│   ├── test_peacebot.py
+│   ├── test_request_id_context.py
+│   └── test_retry_utils.py
+│
+├── decorators.py                 # Global decorators
+├── request_id_context.py         # Request context handling
+├── pytest.ini                    # Pytest configuration
+├── requirements.txt              # Project dependencies
+├── License.md                    # MIT License
+├── .gitignore                    # Git ignore rules
+│
+└── docs/
+    └── README.md                 # Project documentation
+
 ---
 
 ## 🚀 Quickstart  
